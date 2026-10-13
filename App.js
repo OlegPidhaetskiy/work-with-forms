@@ -172,7 +172,8 @@ export default function App() {
             required: 'Check-Out Date is required',
             validate: (value) =>
               !value ||
-              (checkInDate && value > checkInDate) ||
+              !checkInDate ||
+              new Date(value).getTime() > new Date(checkInDate).getTime() ||
               'The Check-Out Date must be later than the Check-In Date',
           }}
           render={() => <View />}
