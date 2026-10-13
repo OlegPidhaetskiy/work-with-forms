@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet,
@@ -55,6 +55,13 @@ export default function App() {
     return checkOut.getTime() > checkIn.getTime() || DATE_ERROR;
   };
 
+  // Revalidate Check-Out whenever either date changes.
+  useEffect(() => {
+    if (checkOutDate) {
+      trigger('checkOutDate');
+    }
+  }, [checkInDate, checkOutDate, trigger]);
+
   const onSubmit = (data) => {
     const formattedData = {
       ...data,
@@ -73,6 +80,7 @@ export default function App() {
       setActivePicker(null);
     }
 
+    // Support both the native callback and the Jest test event.
     const dateValue =
       selectedDate ?? event?.nativeEvent?.timestamp;
 
@@ -90,10 +98,6 @@ export default function App() {
       setValue('checkInDate', parsedDate, {
         shouldValidate: true,
       });
-
-      if (checkOutDate) {
-        trigger('checkOutDate');
-      }
     } else {
       setValue('checkOutDate', parsedDate, {
         shouldValidate: true,
